@@ -25,3 +25,6 @@
  - A sub-8 GB TTS emulation model of the original Jarvis voice (X)
  - Packaged EXE finalized version (X)
  - Localized UI w/ Visualizer (X)
+ - Dyanmic Face Recognition (X)
+ - Object Recognition and Acknowledgment (X)
+ - 3D modeling locally (waiting on optimized text2mesh models/workflows) (X)
