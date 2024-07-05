@@ -20,3 +20,8 @@
 ## 4. Run Install.bat
 ## 5. Run Jarvis.py
 ## 6. Enjoy!
+
+# Progress Roadmap:
+ - A sub-8 GB TTS emulation model of the original Jarvis voice (X)
+ - Packaged EXE finalized version (X)
+ - Localized UI w/ Visualizer (X)
