@@ -1,59 +1,61 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-echo Setting up virtual environment and installing dependencies for JARVIS...
+echo Setting up Conda environment and installing dependencies for JARVIS...
 
-where python3.11 >nul 2>&1
-if %errorlevel% neq 0 ( 
-    echo Python 3.11 not found. Please ensure Python 3.11 is installed and added to PATH.
-    pause
-    exit /b 1
-)
-
-where pip >nul 2>&1
+where conda >nul 2>&1
 if %errorlevel% neq 0 (
-    echo pip not found. Please ensure pip is installed with Python.
+    echo Conda not found. Please install Anaconda or Miniconda and ensure 'conda' is added to your PATH.
     pause
     exit /b 1
 )
 
-set "SCRIPT_DIR=%~dp0"
-echo Creating Python virtual environment in %SCRIPT_DIR%jarvis_venv...
-python3.11 -m venv "%SCRIPT_DIR%jarvis_venv"
+:: Set environment name
+set "ENV_NAME=jarvis_env"
+
+echo Creating Conda environment '%ENV_NAME%' with Python 3.11...
+conda create -y -n %ENV_NAME% python=3.11
 if %errorlevel% neq 0 (
-    echo Failed to create virtual environment. Please check your Python installation.
+    echo Failed to create Conda environment. Please check your Conda installation.
     pause
     exit /b 1
 )
 
-echo Activating virtual environment...
-cd "%SCRIPT_DIR%jarvis_venv"
-call jarvis_venv\Scripts\activate
+echo Activating Conda environment...
+call conda activate %ENV_NAME%
+if %errorlevel% neq 0 (
+    echo Failed to activate Conda environment.
+    pause
+    exit /b 1
+)
 
+:: Upgrade pip and install packages
 python -m pip install --upgrade pip
 
+echo Installing required Python packages...
 pip install pyaudio faster-whisper==1.1.1 ollama chatterbox-tts
 
+:: Ask about GPU support
 SET /P GPU_SUPPORT=Do you want to enable GPU support for CUDA? (yes/no): 
-
 SET "GPU_SUPPORT=%GPU_SUPPORT:~0,1%"
+
 IF /I "%GPU_SUPPORT%"=="y" (
     ECHO Installing PyTorch with CUDA support...
-    pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
 ) ELSE (
     ECHO Installing PyTorch without CUDA support...
-    pip3 install torch torchvision torchaudio
+    pip install torch torchvision torchaudio
 )
 
 if %errorlevel% neq 0 (
-    echo Failed to install some Python packages. Please check your internet connection or pip configuration.
+    echo Failed to install Python packages. Please check your internet connection or pip configuration.
     pause
     exit /b 1
 )
 
 where ollama >nul 2>&1
 if %errorlevel% neq 0 (
-    echo Ollama not found. Please download and install Ollama from https://ollama.com and add it to PATH.
+    echo Ollama not found. Please install it from https://ollama.com and ensure it is added to your PATH.
     pause
     exit /b 1
 )
@@ -61,19 +63,19 @@ if %errorlevel% neq 0 (
 echo Pulling gemma3:4b model for Ollama...
 ollama pull gemma3:4b
 if %errorlevel% neq 0 (
-    echo Failed to pull gemma3:4b model. Please ensure Ollama is running and try again.
+    echo Failed to pull gemma3:4b model. Ensure Ollama is running and try again.
     pause
     exit /b 1
 )
 
-echo Deactivating virtual environment...
-deactivate
-
 echo.
-echo Installation complete! A virtual environment has been created in 'jarvis_venv'.
-echo To run JARVIS, activate the virtual environment with 'jarvis_venv\Scripts\activate' and then run 'python jarvis.py'.
+echo Installation complete! The Conda environment '%ENV_NAME%' is ready.
+echo To activate it, run: conda activate %ENV_NAME%
+echo Then run 'python jarvis.py' to start JARVIS.
 echo.
 
 pause
 endlocal
 exit /b 0
+:: End of install.bat
+:: This script sets up a Conda environment, installs necessary packages, and configures JARVIS for use.
