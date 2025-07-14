@@ -1,0 +1,4 @@
+jarvis_venv/
+jarvis_chat_history.db
+input_audio.wav
+*.wav
